@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇮🇹 Italia Games Portal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #0d0d0d;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated lava/gradient background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 20% 30%, #1a0a00 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, #0a001a 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, #001a0a 0%, transparent 80%),
+                #0d0d0d;
+    z-index: 0;
+  }
+
+  /* Floating particles */
+  .particles {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #d4a432, transparent);
+    opacity: 0;
+    animation: float-up 8s infinite;
+  }
+  @keyframes float-up {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    10%  { opacity: 0.7; }
+    90%  { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-100vh) scale(1.5); }
+  }
+
+  .portal {
+    position: relative; z-index: 10;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px;
+    width: 100%; max-width: 900px;
+  }
+
+  .portal-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .portal-flag {
+    font-size: 56px;
+    display: block;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 20px rgba(212,164,50,0.5));
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(212,164,50,0.5)); }
+    50%       { filter: drop-shadow(0 0 40px rgba(212,164,50,0.9)); }
+  }
+  .portal-title {
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .portal-title span {
+    color: #d4a432;
+    display: block;
+    font-size: clamp(13px, 2vw, 16px);
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    margin-top: 4px;
+  }
+
+  /* Game cards grid */
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    .games-grid { grid-template-columns: 1fr; }
+  }
+
+  .game-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(212,164,50,0.2);
+    border-radius: 20px;
+    padding: 32px 28px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+  }
+  .game-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(212,164,50,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.35s;
+    border-radius: 20px;
+  }
+  .game-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: rgba(212,164,50,0.7);
+    box-shadow: 0 20px 60px rgba(212,164,50,0.2), 0 0 0 1px rgba(212,164,50,0.3);
+  }
+  .game-card:hover::before { opacity: 1; }
+  .game-card:active { transform: translateY(-2px) scale(0.99); }
+
+  .card-number {
+    font-size: 72px;
+    font-weight: 900;
+    color: rgba(212,164,50,0.15);
+    line-height: 1;
+    position: absolute;
+    top: 16px; right: 20px;
+    transition: color 0.35s;
+  }
+  .game-card:hover .card-number { color: rgba(212,164,50,0.35); }
+
+  .card-emoji {
+    font-size: 40px;
+    margin-bottom: 14px;
+    display: block;
+    transition: transform 0.35s;
+  }
+  .game-card:hover .card-emoji { transform: scale(1.2) rotate(-5deg); }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .card-tag {
+    display: inline-block;
+    background: rgba(212,164,50,0.15);
+    border: 1px solid rgba(212,164,50,0.3);
+    color: #d4a432;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* Card color accents */
+  .game-card:nth-child(1) { border-color: rgba(231,76,60,0.25); }
+  .game-card:nth-child(1):hover { border-color: rgba(231,76,60,0.7); box-shadow: 0 20px 60px rgba(231,76,60,0.2), 0 0 0 1px rgba(231,76,60,0.3); }
+  .game-card:nth-child(1) .card-tag { background: rgba(231,76,60,0.15); border-color: rgba(231,76,60,0.3); color: #e74c3c; }
+  .game-card:nth-child(1) .card-number { color: rgba(231,76,60,0.15); }
+  .game-card:nth-child(1):hover .card-number { color: rgba(231,76,60,0.3); }
+
+  .game-card:nth-child(2) { border-color: rgba(46,204,113,0.25); }
+  .game-card:nth-child(2):hover { border-color: rgba(46,204,113,0.7); box-shadow: 0 20px 60px rgba(46,204,113,0.2), 0 0 0 1px rgba(46,204,113,0.3); }
+  .game-card:nth-child(2) .card-tag { background: rgba(46,204,113,0.15); border-color: rgba(46,204,113,0.3); color: #2ecc71; }
+  .game-card:nth-child(2) .card-number { color: rgba(46,204,113,0.15); }
+  .game-card:nth-child(2):hover .card-number { color: rgba(46,204,113,0.3); }
+
+  .game-card:nth-child(3) { border-color: rgba(52,152,219,0.25); }
+  .game-card:nth-child(3):hover { border-color: rgba(52,152,219,0.7); box-shadow: 0 20px 60px rgba(52,152,219,0.2), 0 0 0 1px rgba(52,152,219,0.3); }
+  .game-card:nth-child(3) .card-tag { background: rgba(52,152,219,0.15); border-color: rgba(52,152,219,0.3); color: #3498db; }
+  .game-card:nth-child(3) .card-number { color: rgba(52,152,219,0.15); }
+  .game-card:nth-child(3):hover .card-number { color: rgba(52,152,219,0.3); }
+
+  .game-card:nth-child(4) { border-color: rgba(155,89,182,0.25); }
+  .game-card:nth-child(4):hover { border-color: rgba(155,89,182,0.7); box-shadow: 0 20px 60px rgba(155,89,182,0.2), 0 0 0 1px rgba(155,89,182,0.3); }
+  .game-card:nth-child(4) .card-tag { background: rgba(155,89,182,0.15); border-color: rgba(155,89,182,0.3); color: #9b59b6; }
+  .game-card:nth-child(4) .card-number { color: rgba(155,89,182,0.15); }
+  .game-card:nth-child(4):hover .card-number { color: rgba(155,89,182,0.3); }
+
+  .portal-footer {
+    margin-top: 36px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.2em;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="portal">
+  <div class="portal-header">
+    <span class="portal-flag">🇮🇹</span>
+    <h1 class="portal-title">
+      Italia Games
+      <span>Выбери игру и начни</span>
+    </h1>
+  </div>
+
+  <div class="games-grid">
+
+    <a class="game-card" href="colpo.html">
+      <span class="card-number">1</span>
+      <span class="card-emoji">🥁</span>
+      <div class="card-title">Colpo Perfetto</div>
+      <div class="card-desc">Нажми кнопку точно в такт удару барабана</div>
+      <span class="card-tag">Ритм-игра</span>
+    </a>
+
+    <a class="game-card" href="italian-quiz.html">
+      <span class="card-number">2</span>
+      <span class="card-emoji">🍕</span>
+      <div class="card-title">Итальянский квиз</div>
+      <div class="card-desc">Проверь свои знания об Италии — 10 вопросов</div>
+      <span class="card-tag">Викторина</span>
+    </a>
+
+    <a class="game-card" href="E-Italien-1.html">
+      <span class="card-number">3</span>
+      <span class="card-emoji">🔍</span>
+      <div class="card-title">Enigmi Italiani</div>
+      <div class="card-desc">Найди скрытые объекты на картинах Италии</div>
+      <span class="card-tag">Поиск</span>
+    </a>
+
+    <a class="game-card" href="kod-ot-boksa.html">
+      <span class="card-number">4</span>
+      <span class="card-emoji">🎁</span>
+      <div class="card-title">Код от бокса</div>
+      <div class="card-desc">Угадай трёхзначный код и забери приз</div>
+      <span class="card-tag">Угадайка</span>
+    </a>
+
+  </div>
+
+  <div class="portal-footer">🇮🇹 ITALIA GAMES PORTAL · 2026</div>
+</div>
+
+<script>
+  // Generate floating particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = Math.random() * 100 + 'vh';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 6) + 's';
+    p.style.width = p.style.height = (3 + Math.random() * 6) + 'px';
+    container.appendChild(p);
+  }
+</script>
+
+</body>
+</html>
