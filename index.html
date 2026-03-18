@@ -2,26 +2,34 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>🇮🇹 Italia Games Portal</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  body {
-    min-height: 100vh;
+  html, body {
+    height: 100%;
     background: #0d0d0d;
     font-family: 'Montserrat', sans-serif;
+    overscroll-behavior: none;
+  }
+
+  body {
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 
-  /* Animated lava/gradient background */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -32,13 +40,11 @@
     z-index: 0;
   }
 
-  /* Floating particles */
   .particles {
     position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
   }
   .particle {
     position: absolute;
-    width: 6px; height: 6px;
     border-radius: 50%;
     background: radial-gradient(circle, #d4a432, transparent);
     opacity: 0;
@@ -46,165 +52,165 @@
   }
   @keyframes float-up {
     0%   { opacity: 0; transform: translateY(0) scale(0.5); }
-    10%  { opacity: 0.7; }
-    90%  { opacity: 0.3; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.2; }
     100% { opacity: 0; transform: translateY(-100vh) scale(1.5); }
   }
 
   .portal {
     position: relative; z-index: 10;
     display: flex; flex-direction: column; align-items: center;
-    padding: 20px;
-    width: 100%; max-width: 900px;
+    width: 100%;
+    max-width: 520px;
+    padding: 24px 16px 32px;
+    min-height: 100svh;
   }
 
+  /* ── HEADER ── */
   .portal-header {
     text-align: center;
-    margin-bottom: 48px;
+    margin-bottom: 28px;
+    padding-top: 12px;
   }
   .portal-flag {
-    font-size: 56px;
+    font-size: 52px;
     display: block;
-    margin-bottom: 12px;
-    filter: drop-shadow(0 0 20px rgba(212,164,50,0.5));
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 16px rgba(212,164,50,0.5));
     animation: pulse-glow 3s ease-in-out infinite;
   }
   @keyframes pulse-glow {
-    0%, 100% { filter: drop-shadow(0 0 20px rgba(212,164,50,0.5)); }
-    50%       { filter: drop-shadow(0 0 40px rgba(212,164,50,0.9)); }
+    0%, 100% { filter: drop-shadow(0 0 16px rgba(212,164,50,0.4)); }
+    50%       { filter: drop-shadow(0 0 32px rgba(212,164,50,0.9)); }
   }
   .portal-title {
-    font-size: clamp(28px, 6vw, 52px);
+    font-size: clamp(26px, 8vw, 40px);
     font-weight: 900;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     color: #fff;
     text-transform: uppercase;
+    line-height: 1.1;
   }
   .portal-title span {
     color: #d4a432;
     display: block;
-    font-size: clamp(13px, 2vw, 16px);
+    font-size: clamp(11px, 3vw, 14px);
     font-weight: 400;
-    letter-spacing: 0.3em;
-    margin-top: 4px;
+    letter-spacing: 0.25em;
+    margin-top: 6px;
   }
 
-  /* Game cards grid */
+  /* ── GRID ── */
   .games-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     width: 100%;
   }
 
-  @media (max-width: 600px) {
+  /* Single column on very small screens */
+  @media (max-width: 360px) {
     .games-grid { grid-template-columns: 1fr; }
   }
 
+  /* ── CARD ── */
   .game-card {
     position: relative;
-    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-    border: 1px solid rgba(212,164,50,0.2);
-    border-radius: 20px;
-    padding: 32px 28px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    border-radius: 18px;
+    padding: 20px 16px 18px;
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-    overflow: hidden;
     text-decoration: none;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: 160px;
+    overflow: hidden;
+    /* touch feedback */
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    -webkit-user-select: none; user-select: none;
   }
-  .game-card::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(212,164,50,0.15), transparent);
-    opacity: 0;
-    transition: opacity 0.35s;
-    border-radius: 20px;
+
+  /* Color borders per card */
+  .game-card:nth-child(1) { border: 1.5px solid rgba(231,76,60,0.35); }
+  .game-card:nth-child(2) { border: 1.5px solid rgba(46,204,113,0.35); }
+  .game-card:nth-child(3) { border: 1.5px solid rgba(52,152,219,0.35); }
+  .game-card:nth-child(4) { border: 1.5px solid rgba(155,89,182,0.35); }
+
+  /* Active / tap state instead of hover */
+  .game-card:active {
+    transform: scale(0.96);
   }
-  .game-card:hover {
-    transform: translateY(-6px) scale(1.02);
-    border-color: rgba(212,164,50,0.7);
-    box-shadow: 0 20px 60px rgba(212,164,50,0.2), 0 0 0 1px rgba(212,164,50,0.3);
+  .game-card:nth-child(1):active { box-shadow: 0 0 24px rgba(231,76,60,0.35); }
+  .game-card:nth-child(2):active { box-shadow: 0 0 24px rgba(46,204,113,0.35); }
+  .game-card:nth-child(3):active { box-shadow: 0 0 24px rgba(52,152,219,0.35); }
+  .game-card:nth-child(4):active { box-shadow: 0 0 24px rgba(155,89,182,0.35); }
+
+  /* Hover for desktop */
+  @media (hover: hover) {
+    .game-card:hover { transform: translateY(-4px) scale(1.02); }
+    .game-card:nth-child(1):hover { box-shadow: 0 16px 40px rgba(231,76,60,0.2); border-color: rgba(231,76,60,0.7); }
+    .game-card:nth-child(2):hover { box-shadow: 0 16px 40px rgba(46,204,113,0.2); border-color: rgba(46,204,113,0.7); }
+    .game-card:nth-child(3):hover { box-shadow: 0 16px 40px rgba(52,152,219,0.2); border-color: rgba(52,152,219,0.7); }
+    .game-card:nth-child(4):hover { box-shadow: 0 16px 40px rgba(155,89,182,0.2); border-color: rgba(155,89,182,0.7); }
   }
-  .game-card:hover::before { opacity: 1; }
-  .game-card:active { transform: translateY(-2px) scale(0.99); }
 
   .card-number {
-    font-size: 72px;
+    font-size: 56px;
     font-weight: 900;
-    color: rgba(212,164,50,0.15);
     line-height: 1;
     position: absolute;
-    top: 16px; right: 20px;
-    transition: color 0.35s;
+    top: 10px; right: 12px;
+    opacity: 0.12;
+    color: #fff;
   }
-  .game-card:hover .card-number { color: rgba(212,164,50,0.35); }
+  .game-card:nth-child(1) .card-number { color: #e74c3c; }
+  .game-card:nth-child(2) .card-number { color: #2ecc71; }
+  .game-card:nth-child(3) .card-number { color: #3498db; }
+  .game-card:nth-child(4) .card-number { color: #9b59b6; }
 
   .card-emoji {
-    font-size: 40px;
-    margin-bottom: 14px;
+    font-size: 34px;
+    margin-bottom: 10px;
     display: block;
-    transition: transform 0.35s;
+    line-height: 1;
   }
-  .game-card:hover .card-emoji { transform: scale(1.2) rotate(-5deg); }
-
   .card-title {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 6px;
-    letter-spacing: 0.03em;
+    margin-bottom: 5px;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
   }
   .card-desc {
-    font-size: 13px;
-    color: rgba(255,255,255,0.55);
-    line-height: 1.5;
-    margin-bottom: 14px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    flex: 1;
   }
   .card-tag {
     display: inline-block;
-    background: rgba(212,164,50,0.15);
-    border: 1px solid rgba(212,164,50,0.3);
-    color: #d4a432;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 4px 10px;
+    padding: 3px 9px;
     border-radius: 20px;
+    align-self: flex-start;
   }
-
-  /* Card color accents */
-  .game-card:nth-child(1) { border-color: rgba(231,76,60,0.25); }
-  .game-card:nth-child(1):hover { border-color: rgba(231,76,60,0.7); box-shadow: 0 20px 60px rgba(231,76,60,0.2), 0 0 0 1px rgba(231,76,60,0.3); }
-  .game-card:nth-child(1) .card-tag { background: rgba(231,76,60,0.15); border-color: rgba(231,76,60,0.3); color: #e74c3c; }
-  .game-card:nth-child(1) .card-number { color: rgba(231,76,60,0.15); }
-  .game-card:nth-child(1):hover .card-number { color: rgba(231,76,60,0.3); }
-
-  .game-card:nth-child(2) { border-color: rgba(46,204,113,0.25); }
-  .game-card:nth-child(2):hover { border-color: rgba(46,204,113,0.7); box-shadow: 0 20px 60px rgba(46,204,113,0.2), 0 0 0 1px rgba(46,204,113,0.3); }
-  .game-card:nth-child(2) .card-tag { background: rgba(46,204,113,0.15); border-color: rgba(46,204,113,0.3); color: #2ecc71; }
-  .game-card:nth-child(2) .card-number { color: rgba(46,204,113,0.15); }
-  .game-card:nth-child(2):hover .card-number { color: rgba(46,204,113,0.3); }
-
-  .game-card:nth-child(3) { border-color: rgba(52,152,219,0.25); }
-  .game-card:nth-child(3):hover { border-color: rgba(52,152,219,0.7); box-shadow: 0 20px 60px rgba(52,152,219,0.2), 0 0 0 1px rgba(52,152,219,0.3); }
-  .game-card:nth-child(3) .card-tag { background: rgba(52,152,219,0.15); border-color: rgba(52,152,219,0.3); color: #3498db; }
-  .game-card:nth-child(3) .card-number { color: rgba(52,152,219,0.15); }
-  .game-card:nth-child(3):hover .card-number { color: rgba(52,152,219,0.3); }
-
-  .game-card:nth-child(4) { border-color: rgba(155,89,182,0.25); }
-  .game-card:nth-child(4):hover { border-color: rgba(155,89,182,0.7); box-shadow: 0 20px 60px rgba(155,89,182,0.2), 0 0 0 1px rgba(155,89,182,0.3); }
-  .game-card:nth-child(4) .card-tag { background: rgba(155,89,182,0.15); border-color: rgba(155,89,182,0.3); color: #9b59b6; }
-  .game-card:nth-child(4) .card-number { color: rgba(155,89,182,0.15); }
-  .game-card:nth-child(4):hover .card-number { color: rgba(155,89,182,0.3); }
+  .game-card:nth-child(1) .card-tag { background: rgba(231,76,60,0.15); border: 1px solid rgba(231,76,60,0.4); color: #e74c3c; }
+  .game-card:nth-child(2) .card-tag { background: rgba(46,204,113,0.15); border: 1px solid rgba(46,204,113,0.4); color: #2ecc71; }
+  .game-card:nth-child(3) .card-tag { background: rgba(52,152,219,0.15); border: 1px solid rgba(52,152,219,0.4); color: #3498db; }
+  .game-card:nth-child(4) .card-tag { background: rgba(155,89,182,0.15); border: 1px solid rgba(155,89,182,0.4); color: #9b59b6; }
 
   .portal-footer {
-    margin-top: 36px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.2);
+    margin-top: 28px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.18);
     letter-spacing: 0.2em;
     text-align: center;
+    padding-bottom: 8px;
   }
 </style>
 </head>
@@ -235,7 +241,7 @@
       <span class="card-number">2</span>
       <span class="card-emoji">🍕</span>
       <div class="card-title">Итальянский квиз</div>
-      <div class="card-desc">Проверь свои знания об Италии — 10 вопросов</div>
+      <div class="card-desc">Проверь знания об Италии — 10 вопросов</div>
       <span class="card-tag">Викторина</span>
     </a>
 
@@ -261,16 +267,16 @@
 </div>
 
 <script>
-  // Generate floating particles
   const container = document.getElementById('particles');
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 20; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.style.left = Math.random() * 100 + 'vw';
     p.style.top = Math.random() * 100 + 'vh';
     p.style.animationDelay = Math.random() * 8 + 's';
     p.style.animationDuration = (6 + Math.random() * 6) + 's';
-    p.style.width = p.style.height = (3 + Math.random() * 6) + 'px';
+    const size = (3 + Math.random() * 5) + 'px';
+    p.style.width = size; p.style.height = size;
     container.appendChild(p);
   }
 </script>
